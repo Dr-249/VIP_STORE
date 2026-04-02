@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP STORE | النخبة</title>
+    <!-- استدعاء الخطوط والأيقونات بروابط مباشرة لضمان العمل على استضافة GitHub -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #a855f7;
+            --secondary: #6366f1;
+            --accent: #d8b4fe;
+            --bg: #030014;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(168, 85, 247, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header { padding: 60px 20px 40px; text-align: center; position: relative; }
+        .logo { 
+            font-size: 3.5rem; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        /* Navigation Grid */
+        .nav-container {
+            max-width: 1000px; margin: 0 auto 50px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px; padding: 0 20px;
+        }
+
+        .nav-btn {
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 15px; border-radius: 16px; cursor: pointer;
+            transition: var(--transition); color: #ccc; font-weight: 700;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+
+        .nav-btn i { font-size: 1.5rem; opacity: 0.7; }
+        .nav-btn.active { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff; border-color: transparent; transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
+        }
+        .nav-btn.active i { opacity: 1; }
+
+        /* Sections Grid */
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 20px; min-height: 50vh; }
+        .grid-section { 
+            display: none; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; animation: fadeIn 0.5s ease forwards;
+        }
+        .grid-section.active { display: grid; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Item Cards */
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 25px; position: relative;
+            transition: var(--transition); display: flex; flex-direction: column;
+            justify-content: space-between; overflow: hidden; backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(255,255,255,0.05); }
+        
+        .card-icon { 
+            width: 50px; height: 50px; background: rgba(168,85,247,0.1); 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: var(--primary); font-size: 1.4rem; margin-bottom: 15px;
+        }
+
+        .card h3 { font-size: 1.2rem; margin-bottom: 10px; color: #fff; }
+        .card p { font-size: 0.85rem; color: #a1a1aa; line-height: 1.5; margin-bottom: 20px; }
+        
+        .price { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; }
+        .price span { font-size: 0.8rem; color: #71717a; }
+
+        .btn-buy {
+            background: #fff; color: #000; border: none; padding: 12px;
+            border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-buy:hover { background: var(--primary); color: #fff; }
+
+        /* Pro Cart Side Panel */
+        .cart-side {
+            position: fixed; left: -450px; top: 0; width: 400px; height: 100%;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
+            z-index: 2000; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            border-right: 1px solid var(--border); padding: 40px 30px;
+            display: flex; flex-direction: column;
+        }
+        .cart-side.open { left: 0; }
+
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .cart-items { flex: 1; overflow-y: auto; padding-right: 5px; }
+        
+        .cart-item-row {
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px;
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .cart-item-row i { color: #ef4444; cursor: pointer; transition: 0.2s; }
+        .cart-item-row i:hover { transform: scale(1.2); }
+
+        .payment-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px dashed var(--primary); padding: 20px; border-radius: 18px; margin-top: 20px;
+        }
+
+        .upload-box { margin-top: 15px; position: relative; }
+        .upload-label {
+            display: block; width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer;
+            font-size: 0.9rem; transition: 0.3s;
+        }
+        .upload-label:hover { background: rgba(255,255,255,0.1); }
+
+        .checkout-btns { margin-top: 25px; }
+        .btn-green {
+            background: #22c55e; color: #fff; width: 100%; padding: 16px; 
+            border-radius: 14px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px;
+        }
+        .btn-outline {
+            background: transparent; color: #fff; width: 100%; padding: 12px;
+            border: 1px solid #444; border-radius: 14px; cursor: pointer; font-size: 0.9rem;
+        }
+
+        /* Floating Badge */
+        .cart-fab {
+            position: fixed; left: 30px; bottom: 30px;
+            width: 70px; height: 70px; background: var(--primary);
+            border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1000; box-shadow: 0 15px 30px rgba(168,85,247,0.4);
+        }
+        .fab-badge {
+            position: absolute; top: -10px; right: -10px; background: #fff; color: #000;
+            width: 28px; height: 28px; border-radius: 50%; font-weight: 900; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        footer { padding: 80px 20px; text-align: center; border-top: 1px solid var(--border); margin-top: 50px; }
+        .socials { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .socials a {
+            width: 50px; height: 50px; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 1.3rem; transition: 0.3s;
+        }
+        .socials a:hover { transform: translateY(-5px); border-color: var(--primary); background: var(--primary); }
+
+        @media (max-width: 450px) { .cart-side { width: 100%; left: -100%; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">VIP STORE</div>
+        <p style="color: #a1a1aa; margin-top: 10px;">أول وأقوى متجر في المجال</p>
+    </header>
+
+    <nav class="nav-container">
+        <div class="nav-btn active" onclick="tab(event, 'sec-wa')"><i class="fab fa-whatsapp"></i><span>واتساب</span></div>
+        <div class="nav-btn" onclick="tab(event, 'sec-fb')"><i class="fab fa-facebook"></i><span>فيسبوك</span></div>
+        <div class="nav-btn" onclick="tab(event, 'sec-num')"><i class="fas fa-globe-africa"></i><span>الأرقام</span></div>
+        <div class="nav-btn" onclick="tab(event, 'sec-pro')"><i class="fas fa-user-ninja"></i><span>متقدم</span></div>
+        <div class="nav-btn" onclick="tab(event, 'sec-about')"><i class="fas fa-info-circle"></i><span>عنا</span></div>
+    </nav>
+
+    <div class="main-container">
+        <!-- WhatsApp -->
+        <div id="sec-wa" class="grid-section active">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                <h3>حظر (بلاغ 1)</h3>
+                <p>الملف التعليمي الحصري للحظر الفوري من إبلاغ واحد.</p>
+                <div class="price">12,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('حظر (بلاغ 1)', 12000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-unlock"></i></div>
+                <h3>فك الحظر</h3>
+                <p>تعليم احتراف فك حظر أرقام الواتساب المعطلة.</p>
+                <div class="price">20,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('فك الحظر', 20000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-skull"></i></div>
+                <h3>ارقام فنش</h3>
+                <p>ارقام فنش جاهزة مع خصم 25% لفترة محدودة.</p>
+                <div class="price">25,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('أرقام فنش', 25000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+        </div>
+
+        <!-- Facebook -->
+        <div id="sec-fb" class="grid-section">
+            <div class="card">
+                <div class="card-icon"><i class="fab fa-facebook-square"></i></div>
+                <h3>ملف تعليم فيسبوك</h3>
+                <p>تعليم إغلاق وتطيير حسابات الفيسبوك باحترافية.</p>
+                <div class="price">10,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('ملف فيسبوك', 10000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+        </div>
+
+        <!-- Numbers -->
+        <div id="sec-num" class="grid-section">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-magic"></i></div>
+                <h3>طريقة الفنش الجديدة</h3>
+                <p>أقوى طريقة تفنيش نقدمها حصرياً مع خصم خاص.</p>
+                <div class="price">35,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('طريقة الفنش الجديدة', 35000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+        </div>
+
+        <!-- Pro -->
+        <div id="sec-pro" class="grid-section">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-shield-virus"></i></div>
+                <h3>ملف تعليم الاختراق</h3>
+                <p>ملف شامل في الأمن السيبراني والاختراق الأخلاقي.</p>
+                <div class="price">25,000 <span>SDG</span></div>
+                <button class="btn-buy" onclick="add('ملف الاختراق', 25000)"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+        </div>
+
+        <!-- About Us -->
+        <div id="sec-about" class="grid-section" style="display: none; max-width: 700px; margin: 0 auto; text-align: center;">
+            <div class="card" style="display: block;">
+                <h2 style="color: var(--primary); margin-bottom: 15px;">من نحن؟</h2>
+                <p style="font-size: 1rem;">نحن VIP STORE، فريق تقني متخصص في توفير الخدمات الرقمية والتعليمية المتطورة. نضمن لك السرية والاحترافية والنتائج المضمونة في كافة خدماتنا.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Fab -->
+    <div class="cart-fab" onclick="side()">
+        <i class="fas fa-shopping-basket"></i>
+        <div class="fab-badge" id="cCount">0</div>
+    </div>
+
+    <!-- Side Cart -->
+    <div class="cart-side" id="cPanel">
+        <div class="cart-header">
+            <h2 style="font-weight: 900;">السلة</h2>
+            <i class="fas fa-times" style="font-size: 1.5rem; cursor: pointer;" onclick="side()"></i>
+        </div>
+        <div id="cItems" class="cart-items"></div>
+        <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.3rem;">
+                <span>المجموع:</span>
+                <span id="cTotal">0</span>
+            </div>
+            <p style="font-size: 0.8rem; color: #71717a;">SDG</p>
+        </div>
+        <div class="payment-card">
+            <p style="font-size: 0.85rem; opacity: 0.7;">🏦 الدفع عبر ماي كاشي</p>
+            <p style="font-size: 1.5rem; font-weight: 900; color: var(--primary); margin: 5px 0;">400826211</p>
+            <div class="upload-box">
+                <label for="fIn" class="upload-label" id="fSt">إرفاق إشعار التحويل</label>
+                <input type="file" id="fIn" style="display:none" onchange="fileUp()">
+            </div>
+        </div>
+        <div class="checkout-btns">
+            <button class="btn-green" onclick="order(true)">إرسال الطلب (واتساب)</button>
+            <button class="btn-outline" onclick="order(false)">تواصل للدفع المباشر</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="socials">
+            <a href="https://www.facebook.com/profile.php?id=61575355534919" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://chat.whatsapp.com/Bi6ynpf0jDpFb8sa1icEFh?mode=gi_t" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://t.me/aA7DeUllbCgzNWE8" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+        </div>
+        <p style="font-weight: 700;">دعم العملاء: <span style="color: var(--primary);">+967733554041</span></p>
+        <p style="margin-top: 20px; font-size: 0.7rem; opacity: 0.4;">VIP STORE &copy; 2024</p>
+    </footer>
+
+    <script>
+        const WA_NUM = "967733554041";
+        let cart = [];
+
+        function tab(e, id) {
+            document.querySelectorAll('.grid-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 'sec-about') document.getElementById(id).style.display = 'block';
+            else document.getElementById(id).style.display = 'grid';
+            e.currentTarget.classList.add('active');
+        }
+
+        function side() { document.getElementById('cPanel').classList.toggle('open'); }
+
+        function add(n, p) {
+            cart.push({n, p});
+            render();
+            const fab = document.querySelector('.cart-fab');
+            fab.style.transform = "scale(1.2)";
+            setTimeout(() => fab.style.transform = "scale(1)", 200);
+        }
+
+        function rem(i) { cart.splice(i, 1); render(); }
+
+        function render() {
+            document.getElementById('cCount').innerText = cart.length;
+            const list = document.getElementById('cItems');
+            list.innerHTML = "";
+            let total = 0;
+            cart.forEach((item, i) => {
+                total += item.p;
+                list.innerHTML += `
+                    <div class="cart-item-row">
+                        <div>
+                            <div style="font-weight:700; font-size:0.9rem;">${item.n}</div>
+                            <div style="font-size:0.8rem; color:var(--primary);">${item.p.toLocaleString()} SDG</div>
+                        </div>
+                        <i class="fas fa-trash-alt" onclick="rem(${i})"></i>
+                    </div>
+                `;
+            });
+            document.getElementById('cTotal').innerText = total.toLocaleString();
+        }
+
+        function fileUp() {
+            document.getElementById('fSt').innerHTML = "✅ تم تحميل الإشعار";
+            document.getElementById('fSt').style.color = "#22c55e";
+        }
+
+        function order(withProof) {
+            if(cart.length === 0) return alert("السلة فارغة!");
+            let msg = "🚀 *طلب جديد من VIP STORE*\n\n";
+            let total = 0;
+            cart.forEach((it, i) => {
+                msg += `🔹 ${it.n} - ${it.p.toLocaleString()} SDG\n`;
+                total += it.p;
+            });
+            msg += `\n💰 *الإجمالي:* ${total.toLocaleString()} SDG`;
+            msg += `\n📌 *كاشي:* 400826211`;
+            msg += withProof ? "\n\n📸 *سأقوم بإرسال صورة الإشعار الآن.*" : "\n\n💬 أريد الدفع بطريقة أخرى.";
+            window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
+
